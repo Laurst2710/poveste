@@ -5,28 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!--
-    HTML 1.1 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
+    HTML 1.7 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
     Managementul configurației: versiune crescătoare
 
-    FIX 1.1 (PRINT în Google Sites embed / iframe):
-    - Eliminat window.print() (poate fi blocat în iframe)
-    - Înlocuit cu „Deschide pentru tipărire” (tab nou) + instrucțiune Ctrl+P
+    FIX 1.7 (Tipărire + preview citet, inclusiv în Google Sites embed):
+    - Buton "Tipărește": deschide pagina DIRECTĂ în tab nou cu ?print=1 și declanșează print acolo
+    - Buton "Previzualizare tipărire": comută stil alb/negru (ca la print) pentru citire în preview
+    - Eliminat textul "pentru profesor" / instrucțiuni pentru adult din conținutul afișat
   -->
 
   <title>Povestea simplă a programării — Fișă educațională</title>
 
   <style>
-    /* =========================
-       Stil general (educațional)
-       ========================= */
     :root{
       --bg: #0b1020;
-      --card: rgba(255,255,255,0.06);
-      --card2: rgba(255,255,255,0.09);
       --text: #eaf0ff;
       --muted: rgba(234,240,255,0.75);
       --accent: #7cc7ff;
-      --ok: #58d68d;
       --border: rgba(255,255,255,0.12);
       --shadow: 0 12px 28px rgba(0,0,0,0.35);
       --radius: 18px;
@@ -38,9 +33,10 @@
     body{
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      background: radial-gradient(1200px 700px at 20% 10%, rgba(124,199,255,0.18), transparent 55%),
-                  radial-gradient(900px 650px at 85% 25%, rgba(88,214,141,0.12), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(124,199,255,0.18), transparent 55%),
+        radial-gradient(900px 650px at 85% 25%, rgba(88,214,141,0.12), transparent 55%),
+        var(--bg);
       color: var(--text);
       line-height: 1.45;
     }
@@ -73,6 +69,7 @@
       color: var(--muted);
       font-size: 12px;
       letter-spacing: 0.2px;
+      font-weight: 800;
     }
 
     h1{
@@ -104,7 +101,7 @@
       padding: 10px 12px;
       border-radius: 12px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 900;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
@@ -116,15 +113,6 @@
       border-color: rgba(255,255,255,0.22);
     }
     button:active, a.btn:active{ transform: translateY(1px); }
-
-    .print-note{
-      padding: 8px 10px;
-      border: 1px dashed rgba(255,255,255,0.22);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.04);
-      font-size: 13px;
-      color: var(--muted);
-    }
 
     main{
       margin-top: 16px;
@@ -152,9 +140,6 @@
       color: var(--muted);
     }
 
-    /* =========================
-       Ilustrație
-       ========================= */
     .illustration{
       display: grid;
       gap: 10px;
@@ -191,9 +176,6 @@
       color: var(--muted);
     }
 
-    /* =========================
-       Cadre poveste (6 panouri)
-       ========================= */
     .grid{
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -206,7 +188,7 @@
       border: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
       border-radius: var(--radius2);
-      padding: 12px 12px 12px;
+      padding: 12px;
       display: grid;
       gap: 10px;
       min-height: 145px;
@@ -221,7 +203,7 @@
       background: rgba(0,0,0,0.18);
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing: 0.2px;
     }
 
@@ -234,7 +216,7 @@
     }
 
     .who{
-      font-weight: 800;
+      font-weight: 900;
       color: var(--accent);
     }
 
@@ -256,7 +238,7 @@
 
     .key .big{
       font-size: clamp(18px, 2.2vw, 24px);
-      font-weight: 900;
+      font-weight: 950;
       color: #eafff2;
       letter-spacing: 0.2px;
     }
@@ -267,38 +249,53 @@
       font-size: 14px;
     }
 
-    footer{
-      margin-top: 10px;
-      padding: 14px 16px;
-      color: var(--muted);
-      font-size: 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,0.04);
-    }
-
-    /* =========================
-       Responsiv
-       ========================= */
     @media (max-width: 860px){
       .panel{ grid-column: span 12; }
     }
 
     /* =========================
+       PRINT PREVIEW (on-screen)
+       ========================= */
+    body.print-preview{
+      background:#fff !important;
+      color:#000 !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+    body.print-preview *{
+      color:#000 !important;
+      text-shadow:none !important;
+      box-shadow:none !important;
+      background:transparent !important;
+      filter:none !important;
+    }
+    body.print-preview header,
+    body.print-preview .card,
+    body.print-preview figure,
+    body.print-preview .panel,
+    body.print-preview .key{
+      border-color:#bdbdbd !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
+    }
+    body.print-preview .badge{
+      background:transparent !important;
+      border-color:#bdbdbd !important;
+      color:#000 !important;
+    }
+    body.print-preview .who{ color:#0b4aa2 !important; }
+    body.print-preview .bubble{ border-color:#bdbdbd !important; }
+
+    /* =========================
        Print-friendly
        ========================= */
     @media print{
+      @page{ margin: 12mm; }
       body{ background: #ffffff !important; color: #000000 !important; }
-      header, .card, footer, figure, .panel, .key{
+      header, .card, figure, .panel, .key{
         box-shadow: none !important;
-      }
-      header, .card, footer{
         background: #ffffff !important;
         border-color: #cccccc !important;
-      }
-      .panel, figure, .key{
-        background: #ffffff !important;
-        border-color: #cccccc !important;
+        border-radius: 0 !important;
       }
       .badge, .top-actions, .hint{ display: none !important; }
       .wrap{ padding: 0 !important; }
@@ -312,7 +309,7 @@
   <div class="wrap">
     <header>
       <div class="badge" aria-label="Versiune document">
-        <span>HTML 1.1</span>
+        <span>HTML 1.7</span>
         <span>•</span>
         <span>Fișă educațională</span>
         <span>•</span>
@@ -321,20 +318,17 @@
 
       <h1>Povestea simplă a programării</h1>
       <p class="lead">
-        O poveste scurtă pentru copii: calculatorul este foarte ascultător, dar are nevoie de instrucțiuni clare, pas cu pas.
-        <b>În Google Sites (embed), tipărirea din buton poate fi blocată</b>, de aceea deschiderea pentru tipărire se face în filă nouă.
+        O poveste scurtă: calculatorul este foarte ascultător, dar are nevoie de instrucțiuni clare, pas cu pas.
       </p>
 
       <div class="top-actions">
-        <a class="btn" id="printOpenBtn" href="#" target="_blank" rel="noopener">Deschide pentru tipărire ↗</a>
-        <div class="print-note">În fila nouă: apasă <b>Ctrl+P</b> (sau Save as PDF).</div>
+        <button type="button" id="ppBtn" onclick="togglePrintPreview()">🧾 Previzualizare tipărire</button>
+        <button type="button" onclick="printSafe()">🖨️ Tipărește</button>
+        <a class="btn" id="printOpenBtn" href="#" target="_blank" rel="noopener">↗ Deschide pagina direct</a>
       </div>
     </header>
 
     <main>
-      <!-- =========================
-           Card: Ilustrație
-           ========================= -->
       <section class="card" aria-label="Ilustrație">
         <h2>Ilustrație</h2>
         <div class="content illustration">
@@ -350,20 +344,15 @@
           </figure>
 
           <div id="imgFallback" class="hint" style="display:none;">
-            Imaginea nu a fost găsită. Soluție: pune fișierul <b>ilustratie_programare.png</b> în același folder cu această pagină
-            sau modifică atributul <b>src</b> către numele corect.
+            Imaginea nu a fost găsită. Pune fișierul <b>ilustratie_programare.png</b> în același folder cu pagina.
           </div>
         </div>
       </section>
 
-      <!-- =========================
-           Card: Povestea (6 cadre)
-           ========================= -->
       <section class="card" aria-label="Povestea în 6 cadre">
         <h2>Povestea (6 cadre)</h2>
 
         <div class="grid">
-          <!-- Cadru 1 -->
           <article class="panel">
             <div class="label">Cadru 1</div>
             <div class="bubble">
@@ -374,7 +363,6 @@
             </div>
           </article>
 
-          <!-- Cadru 2 -->
           <article class="panel">
             <div class="label">Cadru 2</div>
             <div class="bubble">
@@ -385,7 +373,6 @@
             </div>
           </article>
 
-          <!-- Cadru 3 -->
           <article class="panel">
             <div class="label">Cadru 3</div>
             <div class="bubble">
@@ -397,7 +384,6 @@
             </div>
           </article>
 
-          <!-- Cadru 4 -->
           <article class="panel">
             <div class="label">Cadru 4</div>
             <div class="bubble">
@@ -411,7 +397,6 @@
             </div>
           </article>
 
-          <!-- Cadru 5 -->
           <article class="panel">
             <div class="label">Cadru 5</div>
             <div class="bubble">
@@ -422,7 +407,6 @@
             </div>
           </article>
 
-          <!-- Cadru 6 -->
           <article class="panel">
             <div class="label">Cadru 6</div>
             <div class="bubble">
@@ -435,44 +419,77 @@
 
         <div class="content">
           <div class="key" aria-label="Ideea-cheie">
-            <div class="big">Ideea-cheie pentru copii</div>
+            <div class="big">Ideea-cheie</div>
             <p class="small">
               Un calculator nu ghicește. Dacă vrei să facă ceva, îi spui exact pașii, în ordine.
-              Asta înseamnă programare.
             </p>
           </div>
         </div>
       </section>
-
-      <footer>
-        <b>Notă (pentru profesor):</b> citește povestea, apoi cere elevilor să transforme o acțiune simplă („spală-te pe mâini”, „desenează o casă”)
-        în pași clari. Scop: înțelegerea ideii „pas cu pas”.
-      </footer>
     </main>
   </div>
 
   <script>
-    // HTML 1.1 — FIX PRINT:
-    // În iframe (Google Sites), window.print() poate fi blocat.
-    // Soluția robustă: deschidem pagina în filă nouă, iar acolo se face Ctrl+P.
+    // HTML 1.7 — Print safe + preview citet
 
-    (function setPrintLink(){
-      const url = new URL(window.location.href);
+    // CONFIG: dacă vrei să forțezi un URL direct (GitHub Pages), pune aici.
+    // Dacă lași "", se calculează automat din adresa curentă (când e deschis direct).
+    const DIRECT_URL = "";
+
+    function normalizeBaseFromHref(href){
+      const url = new URL(href);
       let base = url.href;
 
-      // Normalizează: dacă e .../index.html => .../
       if (base.endsWith("index.html")) {
         base = base.slice(0, -("index.html".length));
       }
+      if (!base.endsWith("/")) base += "/";
+      return base;
+    }
 
-      // dacă nu se termină cu /, adaugă /
-      if (!base.endsWith("/")) {
-        base += "/";
+    function getDirectBase(){
+      const d = String(DIRECT_URL || "").trim();
+      if (d) return d.endsWith("/") ? d : (d + "/");
+      return normalizeBaseFromHref(window.location.href);
+    }
+
+    function togglePrintPreview(){
+      const on = document.body.classList.toggle("print-preview");
+      const b = document.getElementById("ppBtn");
+      b.textContent = on ? "🧾 Preview: ON" : "🧾 Previzualizare tipărire";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function printSafe(){
+      const base = getDirectBase();
+      const here = window.location.href;
+
+      // dacă suntem deja pe pagina directă (nu în embed), printăm aici
+      if (here.startsWith(base)) {
+        window.print();
+        return;
       }
 
+      // altfel, deschidem pagina directă cu ?print=1 în tab nou (print acolo)
+      const target = base + "?print=1";
+      window.open(target, "_blank", "noopener");
+    }
+
+    function autoPrintIfRequested(){
+      const q = new URLSearchParams(window.location.search);
+      if(q.get("print") === "1"){
+        document.body.classList.add("print-preview");
+        const b = document.getElementById("ppBtn");
+        if (b) b.textContent = "🧾 Preview: ON";
+        setTimeout(() => window.print(), 120);
+      }
+    }
+
+    (function init(){
+      const base = getDirectBase();
       document.getElementById("printOpenBtn").href = base;
+      autoPrintIfRequested();
     })();
   </script>
 </body>
 </html>
-
