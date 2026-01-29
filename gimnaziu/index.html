@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!--
-    HTML 1.2 — GIMNAZIU: Robotul din labirint (10–14 ani)
+    HTML 1.4 — GIMNAZIU: Robotul din labirint (10–14 ani)
     Managementul configurației: versiune crescătoare
 
-    FIX 1.2 (PRINT):
-    - Print alb/negru cu contrast mare (text 100% negru, fundal alb)
-    - Eliminare umbre / transparențe / gradient care se tipăresc urât
-    - Stabilizare paginare (evită tăieri ciudate între elemente)
-    - Păstrează „Deschide pentru tipărire” (tab nou) pentru Google Sites embed
+    FIX 1.4 (PRINT în Google Sites embed):
+    - NU folosim window.print / window.open / target=_blank (pot fi blocate)
+    - Afișăm link direct către GitHub Pages (copiabil) + instrucțiune Ctrl+P
+    - Print CSS rămâne curat (alb/negru, contrast mare)
   -->
 
   <title>Robotul din labirint — Programare (Gimnaziu)</title>
@@ -34,13 +33,13 @@
         var(--bg);
       color:var(--text); line-height:1.45;
     }
-    .wrap{max-width:var(--maxw); margin:0 auto; padding:22px 14px 36px;}
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:18px 12px 26px;}
     header{
       border:1px solid var(--border);
       background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
       border-radius:var(--r);
       box-shadow:var(--shadow);
-      padding:16px;
+      padding:14px;
       display:grid; gap:10px;
     }
     .badge{
@@ -48,19 +47,20 @@
       padding:6px 10px; border-radius:999px;
       border:1px solid var(--border);
       background:rgba(0,0,0,0.18);
-      color:var(--muted); font-size:12px; font-weight:700;
+      color:var(--muted); font-size:12px; font-weight:800;
     }
     h1{margin:0; font-size:clamp(20px, 3vw, 30px);}
-    .lead{margin:0; color:var(--muted); max-width:85ch; font-size:14.5px;}
+    .lead{margin:0; color:var(--muted); max-width:92ch; font-size:14.5px;}
 
     .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding-top:4px;}
-    button, a.btn{
+    button{
       appearance:none; border:1px solid var(--border);
       background:rgba(255,255,255,0.07);
       color:var(--text); padding:10px 12px; border-radius:12px;
-      cursor:pointer; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+      cursor:pointer; font-weight:900; display:inline-flex; align-items:center; gap:8px;
     }
-    button:hover, a.btn:hover{background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.24);}
+    button:hover{background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.24);}
+
     .status{
       color:var(--muted); font-size:13px; padding:8px 10px;
       border:1px dashed rgba(255,255,255,0.18); border-radius:12px; background:rgba(255,255,255,0.04);
@@ -68,7 +68,30 @@
     }
     .status b{color:var(--text);}
 
-    main{margin-top:14px; display:grid; gap:14px;}
+    .printbox{
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(0,0,0,0.18);
+      border-radius:12px;
+      padding:10px 12px;
+      color:var(--muted);
+      font-size:13px;
+      display:grid;
+      gap:8px;
+    }
+    .printbox code{
+      color:var(--text);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);
+      padding:6px 8px;
+      border-radius:10px;
+      overflow:auto;
+      white-space:nowrap;
+      display:block;
+    }
+    .printbox .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .note{font-size:12.5px; color:rgba(234,240,255,0.82);}
+
+    main{margin-top:12px; display:grid; gap:12px;}
     .scene{
       border:1px solid var(--border);
       background:rgba(255,255,255,0.05);
@@ -77,16 +100,16 @@
       overflow:hidden;
     }
     .scene-head{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex; align-items:center;
+      padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.10);
       background:rgba(0,0,0,0.16);
+      color:var(--muted); font-weight:900; gap:10px;
     }
-    .left{display:flex; gap:10px; align-items:center; color:var(--muted); font-size:13px; font-weight:900;}
     .pill{
       padding:5px 10px; border-radius:999px; border:1px solid var(--border);
       background:rgba(255,255,255,0.06); color:var(--text); font-size:12px; font-weight:950;
     }
-    .scene-body{display:grid; grid-template-columns:1fr; gap:12px; padding:14px;}
+    .scene-body{display:grid; grid-template-columns:1fr; gap:12px; padding:12px;}
     figure{margin:0;}
     figure img{
       width:100%; height:auto; display:block; border-radius:var(--r2);
@@ -103,9 +126,7 @@
       background:rgba(124,199,255,0.08);
       border-radius:14px; padding:10px 12px;
     }
-    .term .t{
-      font-weight:950; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:6px;
-    }
+    .term .t{font-weight:950; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:6px;}
     .tag{
       font-size:11px; font-weight:900; padding:3px 8px; border-radius:999px;
       border:1px solid rgba(255,255,255,0.16); background:rgba(0,0,0,0.16); color:var(--muted);
@@ -119,13 +140,9 @@
       .scene-body{grid-template-columns:1.05fr 0.95fr; align-items:start;}
     }
 
-    /* =========================
-       PRINT FIX (1.2) — CONTRAST MAXIM
-       ========================= */
+    /* PRINT — CONTRAST MAXIM (pentru când deschizi pagina direct) */
     @media print{
       @page{ margin: 12mm; }
-
-      /* forțează stil „document”, nu „site” */
       html, body{ background:#fff !important; }
       body{
         -webkit-print-color-adjust: exact;
@@ -134,8 +151,6 @@
         font-size: 12pt !important;
         line-height: 1.35 !important;
       }
-
-      /* absolut tot textul negru, fără transparențe */
       *{
         color:#000 !important;
         text-shadow:none !important;
@@ -143,57 +158,23 @@
         background:transparent !important;
         filter:none !important;
       }
+      .badge, .controls, .printbox{ display:none !important; }
 
-      /* elimină controale, badge etc */
-      .badge, .controls{ display:none !important; }
-
-      /* „scene” ca pagină curată */
       header, .scene, .story, .term, figure img{
         border: 1px solid #bdbdbd !important;
         border-radius: 0 !important;
       }
-
       header{ padding: 0 0 6mm 0 !important; border: none !important; }
       h1{ font-size: 16pt !important; margin: 0 0 2mm 0 !important; }
       .lead{ font-size: 11pt !important; margin: 0 !important; }
-
-      .scene{
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        margin: 0 0 8mm 0 !important;
-      }
-
-      .scene-head{
-        border-bottom: 1px solid #bdbdbd !important;
-        padding: 3mm 4mm !important;
-      }
-
-      .pill, .tag{
-        border: 1px solid #bdbdbd !important;
-      }
-
+      .scene{ page-break-inside: avoid !important; break-inside: avoid !important; margin: 0 0 8mm 0 !important; }
+      .scene-head{ border-bottom: 1px solid #bdbdbd !important; padding: 3mm 4mm !important; }
+      .pill, .tag{ border: 1px solid #bdbdbd !important; }
       .scene-body{ padding: 4mm !important; }
-
-      figure img{
-        max-width: 100% !important;
-        height: auto !important;
-      }
-
-      .story{
-        border: none !important;
-        padding: 0 !important;
-      }
-
-      .term{
-        border: 1px solid #cfcfcf !important;
-        padding: 3mm 4mm !important;
-        margin: 0 !important;
-      }
-
-      .term .t{
-        font-weight: 700 !important;
-        margin-bottom: 1mm !important;
-      }
+      figure img{ max-width: 100% !important; height: auto !important; }
+      .story{ border: none !important; padding: 0 !important; }
+      .term{ border: 1px solid #cfcfcf !important; padding: 3mm 4mm !important; margin: 0 !important; }
+      .term .t{ font-weight: 700 !important; margin-bottom: 1mm !important; }
     }
   </style>
 </head>
@@ -201,20 +182,26 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="badge">HTML 1.2 • Gimnaziu • Poveste + definiții</div>
+      <div class="badge">HTML 1.4 • Gimnaziu • Script play + definiții</div>
       <h1>Robotul din labirint</h1>
       <p class="lead">
-        În Google Sites (embed), tipărirea este blocată. Pentru tipărire, deschide pagina în filă nouă și folosește Ctrl+P.
+        <b>Tipărirea din Google Sites (embed) poate fi blocată.</b>
+        Tipărești corect doar dacă deschizi pagina direct (GitHub Pages) și apoi Ctrl+P.
       </p>
+
+      <div class="printbox" aria-label="Tipărire">
+        <div class="note"><b>Pas 1:</b> Copiază linkul de mai jos.</div>
+        <code id="directUrl">—</code>
+        <div class="row">
+          <button type="button" onclick="copyDirect()">Copiază link</button>
+        </div>
+        <div class="note"><b>Pas 2:</b> Deschide linkul într-o filă nouă (manual), apoi apasă <b>Ctrl+P</b>.</div>
+      </div>
 
       <div class="controls">
         <button type="button" onclick="prevScene()">◀ Înapoi</button>
         <button type="button" onclick="nextScene()">Înainte ▶</button>
         <button type="button" onclick="toggleAuto()" id="autoBtn">▶ Auto</button>
-
-        <a class="btn" id="printOpenBtn" href="#" target="_blank" rel="noopener">
-          Deschide pentru tipărire ↗
-        </a>
 
         <div class="status">
           Scena: <b id="sceneNr">1</b>/6 • Auto: <b id="autoState">OFF</b>
@@ -224,7 +211,7 @@
 
     <main>
       <section class="scene" id="s1" data-active="true">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 1</span><span>Provocarea</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 1</span><span>Provocarea</span></div>
         <div class="scene-body">
           <figure><img src="frame1.png" alt="Scena 1" /></figure>
           <div class="story">
@@ -238,7 +225,7 @@
       </section>
 
       <section class="scene" id="s2" data-active="false">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 2</span><span>De la idee la pași</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 2</span><span>De la idee la pași</span></div>
         <div class="scene-body">
           <figure><img src="frame2.png" alt="Scena 2" /></figure>
           <div class="story">
@@ -252,7 +239,7 @@
       </section>
 
       <section class="scene" id="s3" data-active="false">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 3</span><span>Limbajul robotului</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 3</span><span>Limbajul robotului</span></div>
         <div class="scene-body">
           <figure><img src="frame3.png" alt="Scena 3" /></figure>
           <div class="story">
@@ -266,7 +253,7 @@
       </section>
 
       <section class="scene" id="s4" data-active="false">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 4</span><span>Bug-ul</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 4</span><span>Bug-ul</span></div>
         <div class="scene-body">
           <figure><img src="frame4.png" alt="Scena 4" /></figure>
           <div class="story">
@@ -280,7 +267,7 @@
       </section>
 
       <section class="scene" id="s5" data-active="false">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 5</span><span>Condiții + bucle</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 5</span><span>Condiții + bucle</span></div>
         <div class="scene-body">
           <figure><img src="frame5.png" alt="Scena 5" /></figure>
           <div class="story">
@@ -295,7 +282,7 @@
       </section>
 
       <section class="scene" id="s6" data-active="false">
-        <div class="scene-head"><div class="left"><span class="pill">Scena 6</span><span>Debugging</span></div></div>
+        <div class="scene-head"><span class="pill">Scena 6</span><span>Debugging</span></div>
         <div class="scene-body">
           <figure><img src="frame6.png" alt="Scena 6" /></figure>
           <div class="story">
@@ -311,7 +298,7 @@
   </div>
 
   <script>
-    // HTML 1.2 — script play (o scenă pe rând)
+    // HTML 1.4 — script play
     let current = 1;
     const total = 6;
     let autoTimer = null;
@@ -358,13 +345,24 @@
       }, 4500);
     }
 
-    // deschidere tab nou pentru tipărire (Ctrl+P)
-    (function setPrintLink(){
+    function normalizeDirectUrl(){
       const url = new URL(window.location.href);
       let base = url.href;
       if(base.endsWith("index.html")) base = base.slice(0, -("index.html".length));
       if(!base.endsWith("/")) base += "/";
-      document.getElementById("printOpenBtn").href = base;
+      return base;
+    }
+
+    function copyDirect(){
+      const txt = document.getElementById("directUrl").textContent;
+      navigator.clipboard.writeText(txt).catch(() => {
+        alert("Nu pot copia automat. Selectează manual linkul și copiază.");
+      });
+    }
+
+    (function initDirect(){
+      const base = normalizeDirectUrl();
+      document.getElementById("directUrl").textContent = base;
     })();
   </script>
 </body>
