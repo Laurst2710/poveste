@@ -8,16 +8,9 @@
     HTML 1.1 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
     Managementul configurației: versiune crescătoare
 
-    FIX 1.1 (PRINT):
-    - Eliminat window.print() (NU funcționează fiabil când pagina e embed (iframe) în Google Sites)
+    FIX 1.1 (PRINT în Google Sites embed / iframe):
+    - Eliminat window.print() (poate fi blocat în iframe)
     - Înlocuit cu „Deschide pentru tipărire” (tab nou) + instrucțiune Ctrl+P
-    - Linkul se calculează automat către pagina curentă (folder sau index.html)
-
-    CONȚINE:
-    - Titlu + introducere scurtă
-    - Imagine ilustrație (opțional) + fallback
-    - Povestea împărțită pe 6 cadre (text corect)
-    - Secțiune "Ideea-cheie" pentru copii
   -->
 
   <title>Povestea simplă a programării — Fișă educațională</title>
@@ -92,7 +85,7 @@
       margin: 0;
       color: var(--muted);
       font-size: 15px;
-      max-width: 78ch;
+      max-width: 85ch;
     }
 
     .top-actions{
@@ -125,12 +118,12 @@
     button:active, a.btn:active{ transform: translateY(1px); }
 
     .print-note{
-      font-size: 13px;
-      color: var(--muted);
       padding: 8px 10px;
       border: 1px dashed rgba(255,255,255,0.22);
       border-radius: 12px;
       background: rgba(255,255,255,0.04);
+      font-size: 13px;
+      color: var(--muted);
     }
 
     main{
@@ -329,7 +322,7 @@
       <h1>Povestea simplă a programării</h1>
       <p class="lead">
         O poveste scurtă pentru copii: calculatorul este foarte ascultător, dar are nevoie de instrucțiuni clare, pas cu pas.
-        <b>În Google Sites (embed), butonul de tipărire e blocat</b>. De aceea tipărirea se face dintr-o filă nouă.
+        <b>În Google Sites (embed), tipărirea din buton poate fi blocată</b>, de aceea deschiderea pentru tipărire se face în filă nouă.
       </p>
 
       <div class="top-actions">
@@ -345,12 +338,6 @@
       <section class="card" aria-label="Ilustrație">
         <h2>Ilustrație</h2>
         <div class="content illustration">
-          <!--
-            IMPORTANT:
-            1) Pune fișierul imaginii în același folder cu acest HTML.
-            2) Redenumește imaginea exact ca mai jos sau schimbă src.
-            Recomandare nume: ilustratie_programare.png
-          -->
           <figure>
             <img
               src="ilustratie_programare.png"
@@ -465,25 +452,27 @@
   </div>
 
   <script>
-    // HTML 1.1 — FIX PRINT: deschide în tab nou pentru tipărire (Ctrl+P)
+    // HTML 1.1 — FIX PRINT:
+    // În iframe (Google Sites), window.print() poate fi blocat.
+    // Soluția robustă: deschidem pagina în filă nouă, iar acolo se face Ctrl+P.
+
     (function setPrintLink(){
-      // Normalizează la „pagina curentă”
-      // - dacă e .../index.html => .../
-      // - dacă e .../ => rămâne .../
       const url = new URL(window.location.href);
       let base = url.href;
 
+      // Normalizează: dacă e .../index.html => .../
       if (base.endsWith("index.html")) {
         base = base.slice(0, -("index.html".length));
       }
+
+      // dacă nu se termină cu /, adaugă /
       if (!base.endsWith("/")) {
         base += "/";
       }
 
-      // Tab nou cu aceeași pagină (acolo Ctrl+P funcționează)
-      const btn = document.getElementById("printOpenBtn");
-      btn.href = base;
+      document.getElementById("printOpenBtn").href = base;
     })();
   </script>
 </body>
 </html>
+
