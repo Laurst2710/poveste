@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!--
-    HTML 1.0 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
-    Managementul configurației: versiune crescătoare (începe la 1.0)
+    HTML 1.1 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
+    Managementul configurației: versiune crescătoare
+
+    FIX 1.1 (PRINT):
+    - Eliminat window.print() (NU funcționează fiabil când pagina e embed (iframe) în Google Sites)
+    - Înlocuit cu „Deschide pentru tipărire” (tab nou) + instrucțiune Ctrl+P
+    - Linkul se calculează automat către pagina curentă (folder sau index.html)
 
     CONȚINE:
     - Titlu + introducere scurtă
     - Imagine ilustrație (opțional) + fallback
     - Povestea împărțită pe 6 cadre (text corect)
     - Secțiune "Ideea-cheie" pentru copii
-    - Buton Print (pentru fișă)
   -->
 
   <title>Povestea simplă a programării — Fișă educațională</title>
@@ -88,7 +92,7 @@
       margin: 0;
       color: var(--muted);
       font-size: 15px;
-      max-width: 70ch;
+      max-width: 78ch;
     }
 
     .top-actions{
@@ -96,9 +100,10 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-top: 6px;
+      align-items: center;
     }
 
-    button{
+    button, a.btn{
       appearance: none;
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.07);
@@ -107,13 +112,26 @@
       border-radius: 12px;
       cursor: pointer;
       font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       transition: transform 0.06s ease, background 0.12s ease, border-color 0.12s ease;
     }
-    button:hover{
+    button:hover, a.btn:hover{
       background: rgba(255,255,255,0.10);
       border-color: rgba(255,255,255,0.22);
     }
-    button:active{ transform: translateY(1px); }
+    button:active, a.btn:active{ transform: translateY(1px); }
+
+    .print-note{
+      font-size: 13px;
+      color: var(--muted);
+      padding: 8px 10px;
+      border: 1px dashed rgba(255,255,255,0.22);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+    }
 
     main{
       margin-top: 16px;
@@ -289,7 +307,7 @@
         background: #ffffff !important;
         border-color: #cccccc !important;
       }
-      .badge, button, .hint{ display: none !important; }
+      .badge, .top-actions, .hint{ display: none !important; }
       .wrap{ padding: 0 !important; }
       .who{ color: #0b4aa2 !important; }
       .key{ border-color: #4dbb74 !important; }
@@ -301,7 +319,7 @@
   <div class="wrap">
     <header>
       <div class="badge" aria-label="Versiune document">
-        <span>HTML 1.0</span>
+        <span>HTML 1.1</span>
         <span>•</span>
         <span>Fișă educațională</span>
         <span>•</span>
@@ -311,10 +329,12 @@
       <h1>Povestea simplă a programării</h1>
       <p class="lead">
         O poveste scurtă pentru copii: calculatorul este foarte ascultător, dar are nevoie de instrucțiuni clare, pas cu pas.
+        <b>În Google Sites (embed), butonul de tipărire e blocat</b>. De aceea tipărirea se face dintr-o filă nouă.
       </p>
 
       <div class="top-actions">
-        <button type="button" onclick="window.print()">Printează fișa</button>
+        <a class="btn" id="printOpenBtn" href="#" target="_blank" rel="noopener">Deschide pentru tipărire ↗</a>
+        <div class="print-note">În fila nouă: apasă <b>Ctrl+P</b> (sau Save as PDF).</div>
       </div>
     </header>
 
@@ -443,6 +463,27 @@
       </footer>
     </main>
   </div>
+
+  <script>
+    // HTML 1.1 — FIX PRINT: deschide în tab nou pentru tipărire (Ctrl+P)
+    (function setPrintLink(){
+      // Normalizează la „pagina curentă”
+      // - dacă e .../index.html => .../
+      // - dacă e .../ => rămâne .../
+      const url = new URL(window.location.href);
+      let base = url.href;
+
+      if (base.endsWith("index.html")) {
+        base = base.slice(0, -("index.html".length));
+      }
+      if (!base.endsWith("/")) {
+        base += "/";
+      }
+
+      // Tab nou cu aceeași pagină (acolo Ctrl+P funcționează)
+      const btn = document.getElementById("printOpenBtn");
+      btn.href = base;
+    })();
+  </script>
 </body>
 </html>
-
