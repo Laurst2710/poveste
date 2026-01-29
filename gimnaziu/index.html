@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!--
-    HTML 1.7 — GIMNAZIU: Robotul din labirint (10–14 ani)
+    HTML 1.8 — GIMNAZIU: Robotul din labirint (10–14 ani)
     Managementul configurației: versiune crescătoare
 
-    FIX 1.7 (Tipărire + preview citet):
-    - Buton "Tipărește": deschide pagina DIRECTĂ (GitHub Pages) cu ?print=1 și declanșează print acolo
-    - Buton "Previzualizare tipărire": comută stilul alb/negru (ca la print) pentru a fi citet în preview
-    - Fără instrucțiuni pentru profesor în UI
+    MOTIV 1.8 (după 1.7 vine 1.8):
+    - 1.7 avea risc de 404 dacă rămânea placeholder; 1.8 elimină complet dependența de DIRECT_URL
+    - Tipărire robustă din embed: deschide aceeași pagină (GitHub Pages) în tab nou cu ?print=1
+    - Previzualizare tipărire (citet) ON/OFF
+    - Fără instrucțiuni pentru profesor/admin în UI
   -->
 
   <title>Robotul din labirint — Programare (Gimnaziu)</title>
@@ -22,6 +23,7 @@
       --text:#eaf0ff; --muted:rgba(234,240,255,0.78);
       --shadow:0 14px 32px rgba(0,0,0,0.38);
       --r:18px; --r2:14px; --maxw:980px;
+      --accent:#7cc7ff;
     }
     *{box-sizing:border-box}
     body{
@@ -53,14 +55,13 @@
     .lead{margin:0; color:var(--muted); max-width:92ch; font-size:14.5px;}
 
     .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding-top:4px;}
-    button, a.btn{
+    button{
       appearance:none; border:1px solid var(--border);
       background:rgba(255,255,255,0.07);
       color:var(--text); padding:10px 12px; border-radius:12px;
       cursor:pointer; font-weight:900; display:inline-flex; align-items:center; gap:8px;
-      text-decoration:none;
     }
-    button:hover, a.btn:hover{background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.24);}
+    button:hover{background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.24);}
 
     .status{
       color:var(--muted); font-size:13px; padding:8px 10px;
@@ -104,7 +105,7 @@
       background:rgba(124,199,255,0.08);
       border-radius:14px; padding:10px 12px;
     }
-    .term .t{font-weight:950; color:#7cc7ff; display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+    .term .t{font-weight:950; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:6px;}
     .tag{
       font-size:11px; font-weight:900; padding:3px 8px; border-radius:999px;
       border:1px solid rgba(255,255,255,0.16); background:rgba(0,0,0,0.16); color:var(--muted);
@@ -118,7 +119,7 @@
       .scene-body{grid-template-columns:1.05fr 0.95fr; align-items:start;}
     }
 
-    /* PRINT PREVIEW (on-screen): aceleași reguli ca la print, dar aplicate când body are .print-preview */
+    /* PREVIEW PRINT (pe ecran): alb/negru, citet */
     body.print-preview{
       background:#fff !important;
       color:#000 !important;
@@ -131,20 +132,13 @@
       background:transparent !important;
       filter:none !important;
     }
-    body.print-preview header,
-    body.print-preview .scene,
-    body.print-preview .story,
-    body.print-preview .term,
-    body.print-preview figure img{
-      border:1px solid #bdbdbd !important;
-      border-radius:0 !important;
+    body.print-preview header, body.print-preview .scene, body.print-preview .story, body.print-preview .term, body.print-preview figure img{
+      border: 1px solid #bdbdbd !important;
+      border-radius: 0 !important;
     }
-    body.print-preview .scene-head{border-bottom:1px solid #bdbdbd !important; background:transparent !important;}
-    body.print-preview .badge{background:transparent !important;}
-    body.print-preview .status{border:1px dashed #bdbdbd !important;}
-    body.print-preview .pill, body.print-preview .tag{border:1px solid #bdbdbd !important;}
+    body.print-preview .scene-head{ border-bottom: 1px solid #bdbdbd !important; background:transparent !important; }
 
-    /* PRINT — CONTRAST MAXIM */
+    /* PRINT — alb/negru */
     @media print{
       @page{ margin: 12mm; }
       html, body{ background:#fff !important; }
@@ -162,7 +156,7 @@
         background:transparent !important;
         filter:none !important;
       }
-      .controls{ display:none !important; } /* în print scoatem butoanele */
+      .controls{ display:none !important; }
       header, .scene, .story, .term, figure img{
         border: 1px solid #bdbdbd !important;
         border-radius: 0 !important;
@@ -185,11 +179,9 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="badge">HTML 1.7 • Gimnaziu • Tipărire + Preview citet</div>
+      <div class="badge">HTML 1.8 • Gimnaziu • Tipărire + Preview citet</div>
       <h1>Robotul din labirint</h1>
-      <p class="lead">
-        Navighează scenele. Pentru tipărire folosește butonul „Tipărește”.
-      </p>
+      <p class="lead">Navighează scenele. Tipărirea se face din pagina deschisă direct (tab nou).</p>
 
       <div class="controls">
         <button type="button" onclick="prevScene()">◀ Înapoi</button>
@@ -294,11 +286,7 @@
   </div>
 
   <script>
-    // HTML 1.7 — script play + print safe (embed-friendly)
-
-    // CONFIG (OBLIGATORIU): setează aici URL-ul direct (GitHub Pages) către această pagină
-    // Exemplu: "https://laurst2710.github.io/viitorul-digital/robot-labirint/"
-    const DIRECT_URL = "https://EXEMPLU.github.io/REPO/PATH/";
+    // HTML 1.8 — play + print safe (fără placeholder)
 
     let current = 1;
     const total = 6;
@@ -311,17 +299,21 @@
         el.setAttribute("data-active", i===current ? "true" : "false");
       }
       document.getElementById("sceneNr").textContent = String(current);
+      location.hash = "s" + String(current);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
     function nextScene(){
       const n = current < total ? current + 1 : total;
       setActive(n);
       if(current === total && autoTimer){ toggleAuto(); }
     }
+
     function prevScene(){
       const n = current > 1 ? current - 1 : 1;
       setActive(n);
     }
+
     function toggleAuto(){
       const btn = document.getElementById("autoBtn");
       const st = document.getElementById("autoState");
@@ -347,44 +339,59 @@
     }
 
     function togglePrintPreview(){
-      const pp = document.body.classList.toggle("print-preview");
-      document.getElementById("ppState").textContent = pp ? "ON" : "OFF";
+      const on = document.body.classList.toggle("print-preview");
+      document.getElementById("ppState").textContent = on ? "ON" : "OFF";
       const b = document.getElementById("ppBtn");
-      b.textContent = pp ? "🧾 Preview: ON" : "🧾 Previzualizare tipărire";
+      b.textContent = on ? "🧾 Preview: ON" : "🧾 Previzualizare tipărire";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function cleanBase(u){
-      let s = String(u || "").trim();
-      if(!s) return "";
-      if(!s.endsWith("/")) s += "/";
-      return s;
+    function normalizeBase(href){
+      const url = new URL(href);
+      let base = url.href;
+      base = base.split("#")[0];              // scoatem hash
+      if (base.endsWith("index.html")) base = base.slice(0, -("index.html".length));
+      if (!base.endsWith("/")) base += "/";
+      return base;
     }
 
     function printSafe(){
-      // Dacă suntem deja pe pagina DIRECTĂ, printăm aici.
-      // Dacă suntem în embed (sau alt host), deschidem DIRECT_URL cu ?print=1, iar acolo se printează.
-      const here = window.location.href;
-      const direct = cleanBase(DIRECT_URL);
-      if(direct && here.startsWith(direct)){
-        window.print();
-        return;
-      }
-      const target = direct ? (direct + "?print=1") : (here + (here.includes("?") ? "&" : "?") + "print=1");
+      const base = normalizeBase(window.location.href);
+      const target = base + "?print=1#s" + String(current);
+      // mereu în tab nou -> sigur în embed/iframe
       window.open(target, "_blank", "noopener");
     }
 
     function autoPrintIfRequested(){
       const q = new URLSearchParams(window.location.search);
       if(q.get("print") === "1"){
-        // activăm stilul de preview pentru lizibilitate înainte de print
+        // citet înainte de print
         document.body.classList.add("print-preview");
         document.getElementById("ppState").textContent = "ON";
         document.getElementById("ppBtn").textContent = "🧾 Preview: ON";
-        setTimeout(() => window.print(), 120);
+
+        // dacă avem hash #sN, du-te la scena respectivă înainte de print
+        const h = (window.location.hash || "").replace("#", "");
+        const m = /^s([1-6])$/.exec(h);
+        if(m){
+          const n = parseInt(m[1], 10);
+          if(n >= 1 && n <= total) setActive(n);
+        }
+
+        setTimeout(() => window.print(), 160);
       }
     }
 
+    function initFromHash(){
+      const h = (window.location.hash || "").replace("#", "");
+      const m = /^s([1-6])$/.exec(h);
+      if(m){
+        const n = parseInt(m[1], 10);
+        if(n >= 1 && n <= total) setActive(n);
+      }
+    }
+
+    initFromHash();
     autoPrintIfRequested();
   </script>
 </body>
