@@ -1,1 +1,448 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    HTML 1.0 — EDUCAȚIONAL: Poveste + Ilustrație (6 cadre)
+    Managementul configurației: versiune crescătoare (începe la 1.0)
+
+    CONȚINE:
+    - Titlu + introducere scurtă
+    - Imagine ilustrație (opțional) + fallback
+    - Povestea împărțită pe 6 cadre (text corect)
+    - Secțiune "Ideea-cheie" pentru copii
+    - Buton Print (pentru fișă)
+  -->
+
+  <title>Povestea simplă a programării — Fișă educațională</title>
+
+  <style>
+    /* =========================
+       Stil general (educațional)
+       ========================= */
+    :root{
+      --bg: #0b1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.09);
+      --text: #eaf0ff;
+      --muted: rgba(234,240,255,0.75);
+      --accent: #7cc7ff;
+      --ok: #58d68d;
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 12px 28px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --radius2: 14px;
+      --maxw: 1050px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(124,199,255,0.18), transparent 55%),
+                  radial-gradient(900px 650px at 85% 25%, rgba(88,214,141,0.12), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .wrap{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    header{
+      display: grid;
+      gap: 12px;
+      padding: 18px 18px 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .badge{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing: 0.2px;
+    }
+
+    .lead{
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 70ch;
+    }
+
+    .top-actions{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    button{
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.06s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+    button:hover{
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.22);
+    }
+    button:active{ transform: translateY(1px); }
+
+    main{
+      margin-top: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card h2{
+      margin: 0;
+      padding: 14px 16px 0;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .card .content{
+      padding: 12px 16px 16px;
+      color: var(--muted);
+    }
+
+    /* =========================
+       Ilustrație
+       ========================= */
+    .illustration{
+      display: grid;
+      gap: 10px;
+    }
+
+    figure{
+      margin: 0;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      border-radius: var(--radius2);
+      overflow: hidden;
+    }
+
+    figure img{
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    figcaption{
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hint{
+      padding: 10px 12px;
+      border: 1px dashed rgba(255,255,255,0.22);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* =========================
+       Cadre poveste (6 panouri)
+       ========================= */
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      padding: 14px 16px 16px;
+    }
+
+    .panel{
+      grid-column: span 6;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border-radius: var(--radius2);
+      padding: 12px 12px 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 145px;
+    }
+
+    .panel .label{
+      display: inline-flex;
+      width: fit-content;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .bubble{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding: 10px 10px;
+      color: var(--text);
+    }
+
+    .who{
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    ul.steps{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text);
+    }
+    ul.steps li{ margin: 6px 0; }
+
+    .key{
+      border: 1px solid rgba(88,214,141,0.28);
+      background: rgba(88,214,141,0.10);
+      border-radius: var(--radius2);
+      padding: 14px 16px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .key .big{
+      font-size: clamp(18px, 2.2vw, 24px);
+      font-weight: 900;
+      color: #eafff2;
+      letter-spacing: 0.2px;
+    }
+
+    .key .small{
+      margin: 0;
+      color: rgba(234,240,255,0.82);
+      font-size: 14px;
+    }
+
+    footer{
+      margin-top: 10px;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* =========================
+       Responsiv
+       ========================= */
+    @media (max-width: 860px){
+      .panel{ grid-column: span 12; }
+    }
+
+    /* =========================
+       Print-friendly
+       ========================= */
+    @media print{
+      body{ background: #ffffff !important; color: #000000 !important; }
+      header, .card, footer, figure, .panel, .key{
+        box-shadow: none !important;
+      }
+      header, .card, footer{
+        background: #ffffff !important;
+        border-color: #cccccc !important;
+      }
+      .panel, figure, .key{
+        background: #ffffff !important;
+        border-color: #cccccc !important;
+      }
+      .badge, button, .hint{ display: none !important; }
+      .wrap{ padding: 0 !important; }
+      .who{ color: #0b4aa2 !important; }
+      .key{ border-color: #4dbb74 !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge" aria-label="Versiune document">
+        <span>HTML 1.0</span>
+        <span>•</span>
+        <span>Fișă educațională</span>
+        <span>•</span>
+        <span>Poveste + ilustrație</span>
+      </div>
+
+      <h1>Povestea simplă a programării</h1>
+      <p class="lead">
+        O poveste scurtă pentru copii: calculatorul este foarte ascultător, dar are nevoie de instrucțiuni clare, pas cu pas.
+      </p>
+
+      <div class="top-actions">
+        <button type="button" onclick="window.print()">Printează fișa</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- =========================
+           Card: Ilustrație
+           ========================= -->
+      <section class="card" aria-label="Ilustrație">
+        <h2>Ilustrație</h2>
+        <div class="content illustration">
+          <!--
+            IMPORTANT:
+            1) Pune fișierul imaginii în același folder cu acest HTML.
+            2) Redenumește imaginea exact ca mai jos sau schimbă src.
+            Recomandare nume: ilustratie_programare.png
+          -->
+          <figure>
+            <img
+              src="ilustratie_programare.png"
+              alt="Ilustrație în 6 cadre: copilul îi explică unui calculator cum să facă lucruri pas cu pas."
+              onerror="this.style.display='none'; document.getElementById('imgFallback').style.display='block';"
+            />
+            <figcaption>
+              Dacă nu vezi imaginea, pune fișierul <b>ilustratie_programare.png</b> lângă acest HTML (în același folder).
+            </figcaption>
+          </figure>
+
+          <div id="imgFallback" class="hint" style="display:none;">
+            Imaginea nu a fost găsită. Soluție: pune fișierul <b>ilustratie_programare.png</b> în același folder cu această pagină
+            sau modifică atributul <b>src</b> către numele corect.
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================
+           Card: Povestea (6 cadre)
+           ========================= -->
+      <section class="card" aria-label="Povestea în 6 cadre">
+        <h2>Povestea (6 cadre)</h2>
+
+        <div class="grid">
+          <!-- Cadru 1 -->
+          <article class="panel">
+            <div class="label">Cadru 1</div>
+            <div class="bubble">
+              <span class="who">Copilul:</span> „De ce ești trist?”
+            </div>
+            <div class="bubble">
+              <span class="who">Calculatorul:</span> „Pentru că sunt foarte ascultător, dar nimeni nu îmi spune ce să fac.”
+            </div>
+          </article>
+
+          <!-- Cadru 2 -->
+          <article class="panel">
+            <div class="label">Cadru 2</div>
+            <div class="bubble">
+              <span class="who">Copilul:</span> „Bine. Îți spun eu. Desenează un cerc!”
+            </div>
+            <div class="bubble">
+              <span class="who">Calculatorul:</span> „Cum să desenez? Unde? Cu ce?”
+            </div>
+          </article>
+
+          <!-- Cadru 3 -->
+          <article class="panel">
+            <div class="label">Cadru 3</div>
+            <div class="bubble">
+              Text explicativ:
+              <br />
+              „Calculatorul nu înțelege dorințe.
+              <br />
+              El înțelege doar pași mici și clari.”
+            </div>
+          </article>
+
+          <!-- Cadru 4 -->
+          <article class="panel">
+            <div class="label">Cadru 4</div>
+            <div class="bubble">
+              Instrucțiuni (pas cu pas):
+              <ul class="steps">
+                <li>„Pornește creionul.”</li>
+                <li>„Mută-l puțin la dreapta.”</li>
+                <li>„Întoarce-l puțin.”</li>
+                <li>„Repetă iar și iar.”</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- Cadru 5 -->
+          <article class="panel">
+            <div class="label">Cadru 5</div>
+            <div class="bubble">
+              <span class="who">Copilul:</span> „Ura! A apărut un cerc!”
+            </div>
+            <div class="bubble">
+              <span class="who">Calculatorul:</span> „Funcționează!”
+            </div>
+          </article>
+
+          <!-- Cadru 6 -->
+          <article class="panel">
+            <div class="label">Cadru 6</div>
+            <div class="bubble">
+              Text final:
+              <br />
+              <b>„Programarea înseamnă să spui lucrurilor ce să facă, pas cu pas.”</b>
+            </div>
+          </article>
+        </div>
+
+        <div class="content">
+          <div class="key" aria-label="Ideea-cheie">
+            <div class="big">Ideea-cheie pentru copii</div>
+            <p class="small">
+              Un calculator nu ghicește. Dacă vrei să facă ceva, îi spui exact pașii, în ordine.
+              Asta înseamnă programare.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <b>Notă (pentru profesor):</b> citește povestea, apoi cere elevilor să transforme o acțiune simplă („spală-te pe mâini”, „desenează o casă”)
+        în pași clari. Scop: înțelegerea ideii „pas cu pas”.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
 
