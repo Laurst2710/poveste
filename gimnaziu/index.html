@@ -1,1 +1,504 @@
 
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    HTML 1.0 — GIMNAZIU: Robotul din labirint (10–14 ani)
+    Managementul configurației: versiune crescătoare (începe la 1.0)
+
+    STRUCTURĂ AȘTEPTATĂ ÎN REPO:
+    /gimnaziu/
+      index.html   (acest fișier)
+      frame1.png
+      frame2.png
+      frame3.png
+      frame4.png
+      frame5.png
+      frame6.png
+      .gitkeep (opțional)
+
+    CERINȚE ÎNDEPLINITE:
+    - 6 cadre (imagini separate) afișate secvențial (script play)
+    - Poveste sub fiecare cadru
+    - Termeni tehnici evidențiați; imediat sub fiecare termen apare definiția
+    - Fără text peste imagini (imaginile sunt deja numerotate)
+  -->
+
+  <title>Robotul din labirint — Programare (Gimnaziu)</title>
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:rgba(255,255,255,0.06);
+      --border:rgba(255,255,255,0.14);
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,0.78);
+      --accent:#7cc7ff;
+      --ok:#58d68d;
+      --shadow:0 14px 32px rgba(0,0,0,0.38);
+      --r:18px;
+      --r2:14px;
+      --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background:
+        radial-gradient(1100px 700px at 18% 10%, rgba(124,199,255,0.18), transparent 55%),
+        radial-gradient(900px 650px at 86% 22%, rgba(88,214,141,0.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:22px 14px 36px;}
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px 16px 14px;
+      display:grid;
+      gap:10px;
+    }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center; width:fit-content;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,0.18);
+      color:var(--muted); font-size:12px; font-weight:700;
+    }
+    h1{margin:0; font-size:clamp(20px, 3vw, 30px); letter-spacing:0.2px;}
+    .lead{margin:0; color:var(--muted); max-width:80ch; font-size:14.5px;}
+
+    .controls{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      padding-top:4px;
+    }
+    button{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(255,255,255,0.07);
+      color:var(--text); padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:900;
+      transition:transform 0.06s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+    button:hover{background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.24);}
+    button:active{transform:translateY(1px);}
+    .status{
+      color:var(--muted);
+      font-size:13px;
+      padding:8px 10px;
+      border:1px dashed rgba(255,255,255,0.18);
+      border-radius:12px;
+      background:rgba(255,255,255,0.04);
+      flex:1;
+      min-width:260px;
+    }
+    .status b{color:var(--text);}
+
+    main{margin-top:14px; display:grid; gap:14px;}
+
+    .scene{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.05);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .scene-head{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      background:rgba(0,0,0,0.16);
+    }
+    .scene-head .left{
+      display:flex; gap:10px; align-items:center;
+      color:var(--muted); font-size:13px; font-weight:900;
+    }
+    .pill{
+      padding:5px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      font-size:12px; font-weight:950;
+    }
+    .scene-body{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      padding:14px;
+    }
+
+    figure{margin:0;}
+    figure img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:var(--r2);
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(0,0,0,0.18);
+    }
+
+    .story{
+      display:grid;
+      gap:10px;
+      padding:12px 12px;
+      border-radius:var(--r2);
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(0,0,0,0.14);
+    }
+    .story p{
+      margin:0;
+      color:var(--text);
+      font-size:15px;
+    }
+
+    .terms{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+    .term{
+      border:1px solid rgba(124,199,255,0.22);
+      background:rgba(124,199,255,0.08);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .term .t{
+      font-weight:950;
+      color:var(--accent);
+      letter-spacing:0.2px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:6px;
+    }
+    .term .t .tag{
+      font-size:11px;
+      font-weight:900;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(0,0,0,0.16);
+      color:var(--muted);
+    }
+    .term .d{
+      color:rgba(234,240,255,0.86);
+      font-size:13.5px;
+      margin:0;
+    }
+
+    /* Script-play: arătăm doar scena activă */
+    .scene[data-active="false"]{display:none;}
+    .scene[data-active="true"]{display:block;}
+
+    @media (min-width: 900px){
+      .scene-body{grid-template-columns: 1.05fr 0.95fr; align-items:start;}
+    }
+
+    @media print{
+      body{background:#fff !important; color:#000 !important;}
+      header, .scene{box-shadow:none !important;}
+      header, .scene, .story, .term, figure img{background:#fff !important; border-color:#ccc !important;}
+      .badge, .controls{display:none !important;}
+      .term .t{color:#0b4aa2 !important;}
+      .wrap{padding:0 !important;}
+      .scene[data-active="false"]{display:block;} /* la print: toate */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">HTML 1.0 • Gimnaziu • Poveste + definiții</div>
+      <h1>Robotul din labirint</h1>
+      <p class="lead">
+        Vezi o scenă pe rând. Sub fiecare termen tehnic apare imediat definiția lui, ca să se înțeleagă „din mers”.
+      </p>
+
+      <div class="controls">
+        <button type="button" onclick="prevScene()">◀ Înapoi</button>
+        <button type="button" onclick="nextScene()">Înainte ▶</button>
+        <button type="button" onclick="toggleAuto()" id="autoBtn">▶ Auto</button>
+        <button type="button" onclick="window.print()">Printează</button>
+        <div class="status" id="statusBox">
+          Scena: <b id="sceneNr">1</b>/6 • Auto: <b id="autoState">OFF</b>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- SCENA 1 -->
+      <section class="scene" id="s1" data-active="true">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 1</span>
+            <span>Provocarea</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame1.png" alt="Scena 1: profesorul, elevii și robotul în labirint" />
+          </figure>
+
+          <div class="story">
+            <p>
+              În clubul de TIC, profesorul pune pe masă un labirint din carton și un robot mic. Mara și Vlad primesc o provocare:
+              robotul trebuie să ajungă la stea, dar numai dacă ei îi scriu un program clar.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Program <span class="tag">definiție</span></div>
+                <p class="d">Un set de instrucțiuni scrise, pe care robotul le execută exact în ordinea dată.</p>
+              </div>
+              <div class="term">
+                <div class="t">Problemă <span class="tag">definiție</span></div>
+                <p class="d">Ce vrei să obții (robotul ajunge la ieșire) și condițiile (pereți, intersecții, limite).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENA 2 -->
+      <section class="scene" id="s2" data-active="false">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 2</span>
+            <span>De la idee la pași</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame2.png" alt="Scena 2: elevii la laptop, robotul lângă ei" />
+          </figure>
+
+          <div class="story">
+            <p>
+              Vlad spune: „Îi zic să iasă din labirint”. Mara îl oprește: robotul nu înțelege dorințe, ci comenzi precise.
+              Trebuie să transforme ideea într-o listă de pași clari.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Algoritm <span class="tag">definiție</span></div>
+                <p class="d">Un plan de pași clari și finiți, care rezolvă o problemă. Ca o rețetă: are ordine și reguli.</p>
+              </div>
+              <div class="term">
+                <div class="t">Instrucțiune <span class="tag">definiție</span></div>
+                <p class="d">Un singur pas din algoritm (ex: „mergi înainte”, „virează dreapta”).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENA 3 -->
+      <section class="scene" id="s3" data-active="false">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 3</span>
+            <span>Limbajul robotului</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame3.png" alt="Scena 3: elevii scriu pe laptop, robotul așteaptă" />
+          </figure>
+
+          <div class="story">
+            <p>
+              Profesorul le arată comenzile pe care robotul le acceptă. Nu poți scrie orice; trebuie să folosești „cuvintele permise”
+              și forma corectă. Asta e diferența dintre a vorbi liber și a scrie cod.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Limbaj de programare <span class="tag">definiție</span></div>
+                <p class="d">Un sistem de comenzi și reguli prin care comunici cu calculatorul/robotul.</p>
+              </div>
+              <div class="term">
+                <div class="t">Sintaxă <span class="tag">definiție</span></div>
+                <p class="d">Regulile de scriere ale limbajului. Dacă nu le respecți, programul nu rulează.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENA 4 -->
+      <section class="scene" id="s4" data-active="false">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 4</span>
+            <span>Bug-ul apare</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame4.png" alt="Scena 4: robotul lovește un perete în labirint" />
+          </figure>
+
+          <div class="story">
+            <p>
+              Robotul pornește și se blochează la un perete. Mara notează: „Nu e vina robotului. E un semn că planul nostru
+              nu acoperă toate situațiile”. Acum trebuie să identifice exact unde a greșit logica.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Bug <span class="tag">definiție</span></div>
+                <p class="d">O greșeală în cod sau logică, care produce un comportament nedorit (ex: se lovește de perete).</p>
+              </div>
+              <div class="term">
+                <div class="t">Testare <span class="tag">definiție</span></div>
+                <p class="d">Rularea programului ca să observi ce se întâmplă în realitate.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENA 5 -->
+      <section class="scene" id="s5" data-active="false">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 5</span>
+            <span>Regulă + repetare</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame5.png" alt="Scena 5: elevii scriu strategia; robotul merge prin labirint" />
+          </figure>
+
+          <div class="story">
+            <p>
+              În loc să scrie pași diferiți pentru fiecare colț, aleg o regulă generală: „ține dreapta”.
+              O transformă într-o serie de decizii care se repetă până când robotul ajunge la ieșire.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Condiție (IF) <span class="tag">definiție</span></div>
+                <p class="d">O alegere: dacă ceva e adevărat, faci o acțiune; altfel, faci alta.</p>
+              </div>
+              <div class="term">
+                <div class="t">Buclă (LOOP) <span class="tag">definiție</span></div>
+                <p class="d">Repetarea unui set de pași până când se îndeplinește condiția de oprire.</p>
+              </div>
+              <div class="term">
+                <div class="t">Variabilă <span class="tag">definiție</span></div>
+                <p class="d">O „cutie” pentru o valoare care se poate schimba (ex: numărul de pași făcuți).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENA 6 -->
+      <section class="scene" id="s6" data-active="false">
+        <div class="scene-head">
+          <div class="left">
+            <span class="pill">Scena 6</span>
+            <span>Reușita</span>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <figure>
+            <img src="frame6.png" alt="Scena 6: robotul ajunge la stea; elevii sunt bucuroși" />
+          </figure>
+
+          <div class="story">
+            <p>
+              Robotul ajunge la stea. Vlad zâmbește: „Deci funcționează!”. Mara completează: „Și dacă nu funcționa,
+              făceam debugging: observam, corectam, testam din nou”. Asta e partea serioasă din programare.
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <div class="t">Debugging <span class="tag">definiție</span></div>
+                <p class="d">Procesul de a găsi cauza unui bug și de a o repara, apoi de a testa iar ca să confirmi soluția.</p>
+              </div>
+              <div class="term">
+                <div class="t">Iterație <span class="tag">definiție</span></div>
+                <p class="d">„Încercare–îmbunătățire”: rulezi, vezi ce nu merge, modifici, rulezi din nou.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ============================
+    // Script-play: o scenă pe rând
+    // ============================
+    let current = 1;
+    const total = 6;
+    let autoTimer = null;
+
+    function setActive(n){
+      current = n;
+      for(let i=1;i<=total;i++){
+        const el = document.getElementById("s"+i);
+        el.setAttribute("data-active", i===current ? "true" : "false");
+      }
+      document.getElementById("sceneNr").textContent = String(current);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function nextScene(){
+      const n = current < total ? current + 1 : total;
+      setActive(n);
+      if(current === total && autoTimer){ toggleAuto(); }
+    }
+
+    function prevScene(){
+      const n = current > 1 ? current - 1 : 1;
+      setActive(n);
+    }
+
+    function toggleAuto(){
+      const btn = document.getElementById("autoBtn");
+      const st = document.getElementById("autoState");
+
+      if(autoTimer){
+        clearInterval(autoTimer);
+        autoTimer = null;
+        btn.textContent = "▶ Auto";
+        st.textContent = "OFF";
+        return;
+      }
+
+      btn.textContent = "⏸ Auto";
+      st.textContent = "ON";
+
+      autoTimer = setInterval(() => {
+        if(current >= total){
+          clearInterval(autoTimer);
+          autoTimer = null;
+          btn.textContent = "▶ Auto";
+          st.textContent = "OFF";
+          return;
+        }
+        nextScene();
+      }, 4500);
+    }
+  </script>
+</body>
+</html>
